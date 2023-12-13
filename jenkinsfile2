@@ -7,9 +7,10 @@ pipeline
         {
          steps
           {
-            git 'https://github.com/Madhavaraochalla/Maven.git'
+            git 'https://github.com/sakaladevid/maven1.git'
+	    }
           }
-        }
+
         stage('continousBuild')
         {
          steps
