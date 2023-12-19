@@ -1,0 +1,98 @@
+pipeline
+{
+    agent any
+    stages
+    {
+        stage('ContinuousDownload')
+        {
+            steps
+            {
+                script
+                {
+                    try
+                    {
+                        git 'https://github.com/sakaladevid/maven1.git'
+                    }
+                    catch(Exception e1)
+                    {
+                  mail bcc: '', body: 'Jenkins is unable to download from the remote github', cc: '', from: '', replyTo: '', subject: 'Download Failed', to:'sakaladevid1999@gmail.com'     
+                         
+                         
+                     }
+               }
+          }
+        }
+         stage('ContinuousBuild')
+        {
+            steps
+            {
+                script
+                {
+                    try
+                    {
+                         sh 'mvn package'
+                    }
+                    catch(Exception e2)
+                    { 
+                        mail bcc: '', body: 'Jenkins is unable to download from the remote github', cc: '', from: '', replyTo: '', subject: 'Download Failed', to:'sakaladevid1999@gmail.com'     
+                        
+                    }
+                }
+            }
+        }
+         stage('ContinuousDeployment')
+        {
+            steps
+            {
+                script
+                {
+                    try
+                    {
+                        sh 'java -jar/var/lib/jenkins/workspace/Decalrativepipeline handling/testing.jar'
+                        deploy adapters: [tomcat9(credentialsId: '6e55861f-ae7b-414a-bd4c-2f19ca98411d', path: '', url: 'http://172.31.8.220:8080')], contextPath: 'testapp', war: '**/*.war'
+                        
+                    }
+                    catch(Exception e2)
+                    {
+                        mail bcc: '', body: 'the jenkins has failed in CD', cc: '', from: '', replyTo: '', subject: 'CD Failed', to: 'sakaladevid1999@gmail.com'
+                    }
+                }
+            }
+        }
+        stage('ContinuousTesting')
+        {
+            steps
+            {
+                script
+                {
+                    try
+                    {
+                        git 'https://github.com/sakaladevid/functional-testing.git'
+                       sh 'java -jar /var/lib/jenkins/workspace/Decalrativepipeline handling/testing.jar'
+                    }
+                    catch(Exception e4)
+                    {
+                        mail bcc: '', body: 'the jenkins has failed in CT', cc: '', from: '', replyTo: '', subject: 'CT Failed', to: 'sakaladevid1999@gmail.com'
+                    }
+                }
+            }
+        } 
+        stage('ContinuousDelivery')
+        {
+            steps
+            {
+                script
+                {
+                    try
+                    {
+                        deploy adapters: [tomcat9(credentialsId: '6e55861f-ae7b-414a-bd4c-2f19ca98411d', path: '', url: 'http://172.31.15.235:8080')], contextPath: 'prodapp', war: '**/*.war'
+                    }
+                     catch(Exception e5)
+                    {
+                       mail bcc: '', body: 'the Jenkins has failed in CD', cc: '', from: '', replyTo: '', subject: 'CD Failed', to: 'sakaladevid1999@gmail.com'
+                    }
+                }
+            }
+        }
+    }
+}
