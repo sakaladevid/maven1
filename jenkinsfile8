@@ -3,8 +3,8 @@ pipeline
     agent any
      stages
      {
-        stage('continousDownload_loans')
-        {
+      stage('continousDownload_loans')
+      {
            steps
            {
                git 'https://github.com/sakaladevid/maven1.git'
