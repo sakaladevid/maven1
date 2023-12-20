@@ -46,3 +46,4 @@ pipeline
               mail bcc: '', body: 'Jenkins has  failed in CI', cc: '', from: '', replyTo: '', subject: 'CI Failed', to: 'sakaladevid1999@gmail.com'
         }
     }
+}
