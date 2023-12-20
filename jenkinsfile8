@@ -1,0 +1,48 @@
+pipeline
+{
+    agent any
+     stages
+     {
+        stage('continousDownload_master')
+        {
+           steps
+           {
+               git 'https://github.com/sakaladevid/maven1.git'
+            }
+        }
+        stage('continousBuild_master')
+        {
+            steps
+            {
+                sh 'mvn package'
+             }
+         }
+         stage('continousDeployment_master')
+         {
+             steps
+             {
+                deploy adapters: [tomcat9(credentialsId: '6e55861f-ae7b-414a-bd4c-2f19ca98411d', path: '', url: 'http://172.31.8.220:8080')], contextPath: 'testapp', war: '**/*.war'
+             }
+         }
+         stage('continoustesting_master')
+         {
+             steps
+             {
+                git 'https://github.com/sakaladevid/functional-testing.git'
+                
+               sh 'java -jar  /var/lib/jenkins/workspace/Decalrativepipeline2/testing.jar'
+            }
+       }
+  
+    }
+    post
+    {
+        success
+        {
+            deploy adapters: [tomcat9(credentialsId: '6e55861f-ae7b-414a-bd4c-2f19ca98411d', path: '', url: 'http://172.31.15.235:8080')], contextPath: 'prodapp', war: '**/*.war'
+        }
+        failure
+        {
+              mail bcc: '', body: 'Jenkins has  failed in CI', cc: '', from: '', replyTo: '', subject: 'CI Failed', to: 'sakaladevid1999@gmail.com'
+        }
+    }
